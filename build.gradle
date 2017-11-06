@@ -1,0 +1,31 @@
+group 'org.avalancs'
+version '0.1'
+
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceCompatibility = 1.8
+
+mainClassName = "org.avalancs.redundantfilesfinder.Main"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    /*
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+
+    // https://mvnrepository.com/artifact/org.mockito/mockito-all
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '2.0.2-beta'
+    */
+}
+
+// So the jar file in the distribution can run by double clicking
+jar {
+    manifest {
+        attributes('Main-Class': mainClassName,
+                'Manifest-Version': version,
+                'Class-Path': configurations.compile.collect { it.getName() }.join(' '))
+    }
+}
