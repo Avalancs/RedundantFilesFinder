@@ -12,22 +12,30 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         File rootDir = chooseFolder();
-        if(rootDir != null) {
-            Boolean fileSizeMatch = shouldFileSizesMatch();
-            if(fileSizeMatch != null) {
-                if(fileSizeMatch == true) {
-                    fileMatcher = new FileNameAndSizeMatcher();
-                } else {
-                    fileMatcher = new FileNameMatcher();
-                }
+        Boolean fileSizeMatch;
+        Boolean contentMatch = null;
 
-                iterateOverDirectory(Paths.get(rootDir.getAbsolutePath()));
-                fileMatcher.preProcess();
-                System.out.println("***List of redundant files:");
-                fileMatcher.printResult();
-            } else {
-                System.out.println("Cancelled by user");
+        if(rootDir != null) {
+            fileSizeMatch = shouldFileSizesMatch();
+            if(fileSizeMatch == null) {
+                return;
+            } else if(fileSizeMatch == true) {
+                contentMatch = shouldFileContentMatch();
+                if(contentMatch == null) return;
             }
+
+            if(fileSizeMatch == true && contentMatch != true) {
+                fileMatcher = new FileNameAndSizeMatcher();
+            } else if(fileSizeMatch == true && contentMatch == true) {
+                fileMatcher = new FileNameSizeContentMatcher();
+            } else {
+                fileMatcher = new FileNameMatcher();
+            }
+
+            iterateOverDirectory(Paths.get(rootDir.getAbsolutePath()));
+            fileMatcher.preProcess();
+            System.out.println("***List of redundant files:");
+            fileMatcher.printResult();
         }
     }
 
@@ -59,6 +67,17 @@ public class Main {
      */
     private static Boolean shouldFileSizesMatch() {
         int result = JOptionPane.showConfirmDialog(null, "Should file size also have to match to be considered redundant?", "File size matching", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(result == JOptionPane.YES_OPTION) {
+            return true;
+        } else if(result == JOptionPane.NO_OPTION) {
+            return false;
+        } else {
+            return null;
+        }
+    }
+
+    private static Boolean shouldFileContentMatch() {
+        int result = JOptionPane.showConfirmDialog(null, "Should file content also have to match? WARNING: MIGHT TAKE FOREVER FOR LARGE FILES", "File size matching", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
         if(result == JOptionPane.YES_OPTION) {
             return true;
         } else if(result == JOptionPane.NO_OPTION) {

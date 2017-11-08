@@ -67,11 +67,12 @@ public class FileNameAndSizeMatcher implements Matcher {
                 sizeKey -> {
                     List<Path> paths = duplicate.get(sizeKey);
                     String fileName = paths.get(0).getFileName().toString();
-                    System.out.println(fileName + " (" + sizeKey + " bytes)");
 
+                    System.out.println(fileName + " (" + sizeKey + " bytes):");
                     for (Path p : paths) {
                         System.out.println("\t " + p.toString());
                     }
+                    System.out.println();
                 }
 
             );

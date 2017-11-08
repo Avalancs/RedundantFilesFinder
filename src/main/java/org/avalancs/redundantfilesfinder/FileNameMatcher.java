@@ -35,10 +35,11 @@ public class FileNameMatcher implements Matcher {
     @Override
     public void printResult() {
         matchingFileNames.values().forEach(duplicate -> {
-            System.out.println(duplicate.get(0).getFileName().toString() + ": ");
+            System.out.println(duplicate.get(0).getFileName().toString() + " :");
             for (Path p : duplicate) {
                 System.out.println("\t " + p.toString());
             }
+            System.out.println();
         });
     }
 }
