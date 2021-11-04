@@ -44,4 +44,27 @@ public abstract class Matcher {
     boolean fileContentsEqual(Path file, Path otherFile) throws IOException {
         return FileUtils.contentEquals(file.toFile(), otherFile.toFile());
     }
+
+    /**
+     * @param bytes the file size in bytes, e.g. from {@link Files#size}
+     * @return a string for describing the size in gigabytes, megabytes, kilobytes or bytes where applicable.
+     */
+    protected String byteSizeToString(Long bytes) {
+        if(bytes == null) {
+            return "0 bytes:";
+        }
+        long gigabytes = bytes / (1024L*1024L*1024L);
+        long megabytes = bytes / (1024L*1024L);
+        long kilobytes = bytes / 1024L;
+
+        if(gigabytes > 0L) {
+            return gigabytes + " GB (" + megabytes + " MB):";
+        } else if(megabytes > 0L) {
+            return megabytes + " MB (" + bytes + " bytes):";
+        } else if(kilobytes > 0L) {
+            return kilobytes + " KB (" + bytes + " bytes):";
+        } else {
+            return bytes + " bytes:";
+        }
+    }
 }

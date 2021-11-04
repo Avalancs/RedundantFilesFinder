@@ -2,13 +2,10 @@ package org.avalancs.redundantfilesfinder.matchers;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SizeMatcher extends Matcher {
-    final Map<Long, List<Path>> matchingSizes = new HashMap<>();
+    final Map<Long, List<Path>> matchingSizes = new TreeMap<>(Comparator.reverseOrder());
 
     @Override
     public void add(Path path) {
@@ -35,7 +32,7 @@ public class SizeMatcher extends Matcher {
     @Override
     public void printResult() {
         matchingSizes.keySet().forEach(fileSize -> {
-            System.out.println(fileSize + " bytes: ");
+            System.out.println(byteSizeToString(fileSize));
             List<Path> matching = matchingSizes.get(fileSize);
 
             matching.forEach(match -> System.out.println("\t" + match.toString()));

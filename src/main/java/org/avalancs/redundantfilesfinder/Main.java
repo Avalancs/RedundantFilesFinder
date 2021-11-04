@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.stream.Stream;
 
 public class Main {
     private static Matcher fileMatcher;
@@ -42,7 +43,7 @@ public class Main {
                 }
             }
 
-            iterateOverDirectory(Paths.get(rootDir.getAbsolutePath()));
+            iterateOverDirectory(Paths.get(rootDir.getAbsolutePath()), shouldIgnoreShortcutsPrompt());
             fileMatcher.preProcess();
             System.out.println("***List of redundant files:");
             fileMatcher.printResult();
@@ -112,20 +113,36 @@ public class Main {
         }
     }
 
+    static Boolean shouldIgnoreShortcutsPrompt() {
+        int result = JOptionPane.showConfirmDialog(null, "Should windows shortcuts be ignored?", "Ignore Shortcuts", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(result == JOptionPane.YES_OPTION) {
+            return true;
+        } else if(result == JOptionPane.NO_OPTION) {
+            return false;
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Iterates over the files in the given directory denoted by {@code currentDir}, and adds them to {@link #fileMatcher}
      * @param currentDir the given directory
+     * @param shouldIgnoreShortcuts whether to ignore windows shortcuts (.lnk files)
      * @throws IOException If the user does not have permission to list {@code currentDir}
      */
-    static void iterateOverDirectory(Path currentDir) throws IOException {
-        Files.list(currentDir).
-                filter(file -> Files.isRegularFile(file)).
-                forEach(file -> fileMatcher.add(file));
-        Files.list(currentDir).
-                filter(file -> Files.isDirectory(file)).
-                forEach(file -> {
+    static void iterateOverDirectory(Path currentDir, boolean shouldIgnoreShortcuts) throws IOException {
+        Stream<Path> files = Files.list(currentDir).filter(file -> Files.isRegularFile(file));
+        if(shouldIgnoreShortcuts) {
+            files = files.filter(file -> {
+                String fileName = file.getFileName().toString();
+                return !fileName.endsWith(".lnk") && !fileName.endsWith(".LNK");
+            });
+        }
+        files.forEach(file -> fileMatcher.add(file));
+        // recursively call this function for directories
+        Files.list(currentDir).filter(file -> Files.isDirectory(file)).forEach(file -> {
             try {
-                iterateOverDirectory(file);
+                iterateOverDirectory(file, shouldIgnoreShortcuts);
             } catch (IOException e) {
                 e.printStackTrace();
             }
