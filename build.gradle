@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'org.avalancs'
-version '0.1'
+version '1.0'
 
 wrapper {
     distributionType = Wrapper.DistributionType.ALL
@@ -57,9 +57,51 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:4.0.0'
 }
 
+// extra files we want to include in the distribution
+task createExtras {
+    group = "distribution"
+    inputs.property('version', version);
+    outputs.dir("${buildDir}${File.separator}extras");
+
+    doLast {
+        File versionFile = new File("${buildDir}/extras/version.txt")
+        versionFile.text = """Version: ${version}, git: ${getGitHash()}"""
+
+        File readme = new File("${buildDir}/extras/readme.md");
+        readme.text = project.file('readme.md').text.replace('@VERSION@', version).replace('@COMMIT_REF@', getGitHash())
+    }
+}
+
+distributions {
+    main {
+        contents {
+            from(tasks.createExtras.getOutputs().getFiles()) {
+                into('/');
+            }
+            from(project.file('license.txt')) {
+                into('/');
+            }
+            into('/') // do not create nested folder inside zip
+        }
+    }
+}
+
 tasks.named('distZip').configure {
     archiveFileName.set('RedundantFilesFinder.zip')
+    dependsOn createExtras
 }
+
 tasks.named('distTar').configure {
     enabled(false)
+}
+
+String getGitHash() {
+    def process =  'git rev-parse --short HEAD'.execute()
+    process.waitFor()
+    if(process.exitValue() == 0) {
+        return process.text
+    } else {
+        logger.log(LogLevel.WARN, "Could not read git commit hash, will return empty string")
+        return ""
+    }
 }
