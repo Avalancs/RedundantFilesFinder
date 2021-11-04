@@ -1,5 +1,7 @@
 package org.avalancs.redundantfilesfinder;
 
+import org.avalancs.redundantfilesfinder.matchers.*;
+
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
@@ -112,7 +114,7 @@ public class Main {
 
     /**
      * Iterates over the files in the given directory denoted by {@code currentDir}, and adds them to {@link #fileMatcher}
-     * @param currentDir
+     * @param currentDir the given directory
      * @throws IOException If the user does not have permission to list {@code currentDir}
      */
     static void iterateOverDirectory(Path currentDir) throws IOException {
