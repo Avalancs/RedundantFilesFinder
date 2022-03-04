@@ -74,7 +74,7 @@ but replace `run` with `distZip`. You will find the finished zip file in the `bu
 
 ### License
 
-This project is under the GNU General Public License V3. See `license.txt` for more details
+This project is under the MIT License. See `license.txt` for more details
 
 ### Contributors
 
