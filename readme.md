@@ -75,11 +75,3 @@ but replace `run` with `distZip`. You will find the finished zip file in the `bu
 ### License
 
 This project is under the MIT License. See `license.txt` for more details
-
-### Contributors
-
-AvaLanCS
-
-### Version Information
-
-@VERSION@_@COMMIT_REF@

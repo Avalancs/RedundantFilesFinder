@@ -1,0 +1,7 @@
+[versions]
+junit = "5.7.1"
+
+[libraries]
+commons-io = { module = "commons-io:commons-io", version = "2.16.0" }
+junit = { module = "org.junit.jupiter:junit-jupiter", version = "5.10.2" }
+mockito = { module = "org.mockito:mockito-core", version = "5.11.0" }
